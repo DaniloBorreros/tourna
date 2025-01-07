@@ -22,7 +22,6 @@ $newsCount = ($resultNews->num_rows > 0) ? $resultNews->fetch_assoc()['newsCount
 
 <!DOCTYPE html>
 <html>
-<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Dashboard</title>
@@ -32,79 +31,40 @@ $newsCount = ($resultNews->num_rows > 0) ? $resultNews->fetch_assoc()['newsCount
     <link rel="stylesheet" type="text/css" href="dashboard.css">
     <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdn.materialdesignicons.com/6.5.95/css/materialdesignicons.min.css">
-</head>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</>
+
 <body>
-    <div class="row" style="margin-top: 2%; width: 90%; margin-left: 5%;">
-        <div class="col-md-3">
-            <div class="circle-tile">
-                <a href="#">
-                    <div class="circle-tile-heading dark-blue">
-                        <i class="fa fa-users fa-fw fa-3x"></i>
-                    </div>
-                </a>
-                <div class="circle-tile-content dark-blue">
-                    <div class="circle-tile-description text-faded">Users</div>
-                    <div class="circle-tile-number text-faded"><?php echo $userCount; ?></div>
-                    
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-6 m-10">
+        <?php
+        $tiles = [
+            ['color' => 'bg-blue-500', 'icon' => 'fa-users', 'description' => 'Athletes', 'count' => $userCount],
+            ['color' => 'bg-yellow-500', 'icon' => 'fa-calendar', 'description' => 'Incoming Games', 'count' => $incomingGamesCount],
+            ['color' => 'bg-green-500', 'icon' => 'mdi mdi-newspaper', 'description' => 'News', 'count' => $newsCount],
+            ['color' => 'bg-orange-500', 'icon' => 'fa-check', 'description' => 'Finished Games', 'count' => $finishGamesCount]
+        ];
+
+        foreach ($tiles as $tile) {
+            ?>
+            <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+                <div class="flex items-center justify-center <?php echo $tile['color']; ?> text-white rounded-t-lg h-20">
+                    <i class="fa <?php echo $tile['icon']; ?> text-3xl"></i>
+                </div>
+                <div class="p-4 text-center">
+                    <p class="text-gray-500 font-semibold"><?php echo $tile['description']; ?></p>
+                    <p class="text-2xl font-bold text-gray-700"><?php echo $tile['count']; ?></p>
                 </div>
             </div>
-        </div>
-        <div class="col-md-3">
-            <div class="circle-tile">
-                <a href="#">
-                    <div class="circle-tile-heading red bg-warning">
-                        <i class="fa fa-calendar fa-fw fa-3x"></i>
-                    </div>
-                </a>
-                <div class="circle-tile-content red">
-                    <div class="circle-tile-description text-faded">Incoming Games</div>
-                    <div class="circle-tile-number text-faded"><?php echo $incomingGamesCount; ?></div>
-                    
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="circle-tile">
-                <a href="#">
-                    <div class="circle-tile-heading green">
-                        <i class="mdi mdi-newspaper fa-fw fa-4x"></i>
-                    </div>
-                </a>
-                <div class="circle-tile-content green">
-                    <div class="circle-tile-description text-faded">News</div>
-                    <div class="circle-tile-number text-faded"><?php echo $newsCount; ?></div>
-                    
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="circle-tile">
-                <a href="#">
-                    <div class="circle-tile-heading orange">
-                        <i class="fa fa-check fa-fw fa-3x"></i>
-                    </div>
-                </a>
-                <div class="circle-tile-content orange">
-                    <div class="circle-tile-description text-faded">Finish Games</div>
-                    <div class="circle-tile-number text-faded"><?php echo $finishGamesCount; ?></div>
-                    
-                </div>
-            </div>
-        </div>
+            <?php
+        }
+        ?>
     </div>
-
-
     <div class="row">
-    	<div class="col-md-12">
-    		<iframe src="../users/schedule.php" style="height: 100vh; width: 100%;"></iframe>
-    	</div>
+        <div class="col-md-12">
+            <iframe src="../users/schedule.php" style="height: 100vh; width: 100%;"></iframe>
+        </div>
     </div>
-
-
-
-
-
-
-
 </body>
+
 </html>
