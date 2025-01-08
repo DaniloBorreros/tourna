@@ -33,87 +33,150 @@ while ($row = $matches_result->fetch_assoc()) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Match Brackets</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body {
-            background-color: #f8f9fa;
-            color: #212529;
-            font-family: 'Roboto', sans-serif;
+        /* Your provided CSS styles */
+        .playoff-table * {
+            box-sizing: border-box;
+        }
+
+        .playoff-table {
+            font-family: sans-serif;
+            font-size: 15px;
+            line-height: 1.42857143;
+            font-weight: 400;
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            background-color: #f5f5f5;
+        }
+
+        .playoff-table .playoff-table-content {
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display: -ms-flex;
+            display: flex;
             padding: 20px;
         }
 
-        .bracket-container {
+        .playoff-table .playoff-table-tour {
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display: -ms-flex;
             display: flex;
-            gap: 20px;
-            overflow-x: auto;
-            padding: 10px;
-        }
-
-        .round {
-            display: flex;
-            flex-direction: column;
+            -webkit-align-items: center;
+            -ms-align-items: center;
             align-items: center;
-            gap: 20px;
-        }
-
-        .round h3 {
-            font-size: 18px;
-            text-transform: uppercase;
-            color: #0d6efd;
-            margin-bottom: 15px;
-        }
-
-        .match {
-            display: flex;
+            -webkit-flex-direction: column;
+            -ms-flex-direction: column;
             flex-direction: column;
-            gap: 10px;
-            background: #ffffff;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 15px;
-            min-width: 250px;
-            text-align: center;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease-in-out;
+            -webkit-justify-content: space-around;
+            -ms-justify-content: space-around;
+            justify-content: space-around;
+            position: relative;
         }
 
-        .match:hover {
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-            transform: translateY(-5px);
+        .playoff-table .playoff-table-pair {
+            position: relative;
         }
 
-        .player {
+        .playoff-table .playoff-table-pair:before {
+            content: '';
+            position: absolute;
+            top: 27px;
+            right: -12px;
+            width: 12px;
+            height: 1px;
+            background-color: red;
+        }
+
+        .playoff-table .playoff-table-pair:after {
+            content: '';
+            position: absolute;
+            width: 3px;
+            height: 1000px;
+            background-color: #f5f5f5;
+            right: -12px;
+            z-index: 1;
+        }
+
+        .playoff-table .playoff-table-pair:nth-child(even):after {
+            top: 28px;
+        }
+
+        .playoff-table .playoff-table-pair:nth-child(odd):after {
+            bottom: 28px;
+        }
+
+        .playoff-table .playoff-table-pair-style {
+            border: 1px solid #cccccc;
+            background-color: white;
+            width: 160px;
+            margin-bottom: 20px;
+        }
+
+        .playoff-table .playoff-table-group {
+            padding-right: 11px;
+            padding-left: 10px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display: -ms-flex;
             display: flex;
-            justify-content: space-between;
+            -webkit-align-items: center;
+            -ms-align-items: center;
             align-items: center;
-            font-size: 16px;
-            padding: 8px;
-            border-radius: 5px;
+            -webkit-flex-direction: column;
+            -ms-flex-direction: column;
+            flex-direction: column;
+            -webkit-justify-content: space-around;
+            -ms-justify-content: space-around;
+            justify-content: space-around;
+        }
+
+        .playoff-table .playoff-table-left-player,
+        .playoff-table .playoff-table-right-player {
+            min-height: 26px;
+            padding: 3px 5px;
+        }
+
+        .playoff-table .playoff-table-left-player {
+            border-bottom: 1px solid #cccccc;
+        }
+
+        .playoff-table .playoff-table-right-player {
+            margin-top: -1px;
+            border-top: 1px solid #cccccc;
+        }
+
+        .playoff-table .playoff-table-third-place {
+            position: absolute;
+            left: 11px;
+            top: 50%;
+            transform: translateY(-50%);
+            margin-top: 100px;
         }
 
         .winner {
-            color: #198754; /* Bootstrap success green */
+            color: green;
             font-weight: bold;
         }
 
-        .winner .badge {
-            background-color: #198754;
-        }
-
-        .loser {
-            color: #dc3545; /* Bootstrap danger red */
-            text-decoration: line-through;
-        }
-
-        .loser .badge {
-            background-color: #dc3545;
+        .place {
+            font-size: 12px;
+            color: #6c757d;
         }
     </style>
 </head>
+
 <body>
     <div class="container-fluid">
         <h1 class="text-center my-4 text-uppercase text-primary">Match Brackets</h1>
@@ -121,33 +184,41 @@ while ($row = $matches_result->fetch_assoc()) {
         <?php foreach ($sports as $sport_name => $rounds): ?>
             <div class="my-5">
                 <h2 class="text-center text-success text-uppercase"><?= htmlspecialchars($sport_name) ?></h2>
-                <div class="bracket-container">
-                    <?php foreach ($rounds as $round_number => $matches): ?>
-                        <div class="round">
-                            <h3>Round <?= $round_number ?></h3>
-                            <?php foreach ($matches as $match): ?>
-                                <div class="match">
-                                    <div class="player <?= isset($match['winner_name']) && $match['winner_name'] === $match['team1_name'] ? 'winner' : (isset($match['winner_name']) ? 'loser' : '') ?>">
-                                        <span><?= htmlspecialchars($match['team1_name']) ?></span>
-                                        <?= isset($match['winner_name']) && $match['winner_name'] === $match['team1_name'] ? '<span class="badge bg-success text-white">Winner</span>' : '' ?>
-                                    </div>
-                                    <div class="player <?= isset($match['winner_name']) && $match['winner_name'] === $match['team2_name'] ? 'winner' : (isset($match['winner_name']) ? 'loser' : '') ?>">
-                                        <span><?= htmlspecialchars($match['team2_name']) ?></span>
-                                        <?= isset($match['winner_name']) && $match['winner_name'] === $match['team2_name'] ? '<span class="badge bg-success text-white">Winner</span>' : '' ?>
-                                    </div>
-                                    <p class="mt-2">
-                                        <strong>Date:</strong> <?= date('F d, Y h:ia', strtotime($match['schedule'])) ?><br>
-                                        <strong>Place:</strong> <?= htmlspecialchars($match['place']) ?>
-                                    </p>
+                <div class="playoff-table">
+                    <div class="playoff-table-content">
+                        <?php foreach ($rounds as $round_number => $matches): ?>
+                            <div class="playoff-table-tour">
+                                <h3>Round <?= $round_number ?></h3>
+                                <div class="playoff-table-group">
+                                    <?php foreach ($matches as $match): ?>
+                                        <div class="playoff-table-pair playoff-table-pair-style">
+                                            <div class="playoff-table-left-player">
+                                                <?= htmlspecialchars($match['team1_name']) ?>
+                                                <?php if ($match['winner_name'] === $match['team1_name']): ?>
+                                                    <span class="winner">(Winner)</span>
+                                                <?php endif; ?>
+                                            </div>
+                                            <div class="playoff-table-right-player">
+                                                <?= htmlspecialchars($match['team2_name']) ?>
+                                                <?php if ($match['winner_name'] === $match['team2_name']): ?>
+                                                    <span class="winner">(Winner)</span>
+                                                <?php endif; ?>
+                                            </div>
+                                            <div class="place">
+                                                <strong>Place:</strong> <?= htmlspecialchars($match['place']) ?>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
                                 </div>
-                            <?php endforeach; ?>
-                        </div>
-                    <?php endforeach; ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
             </div>
         <?php endforeach; ?>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
 <?php $conn->close(); ?>
